@@ -1,22 +1,22 @@
-@import "tailwindcss";
+﻿@import "tailwindcss";
 
 /* ============================================================
-   Asistente GEM · Hoja de estilos base
-   Paleta "crema académica": beige cálido con tonos tierra,
-   gris oscuro para el texto, acentos en óxido quemado.
+   Asistente GEM Â· Hoja de estilos base
+   Paleta "crema acadÃ©mica": beige cÃ¡lido con tonos tierra,
+   gris oscuro para el texto, acentos en Ã³xido quemado.
    ============================================================ */
 
 :root {
-  --bg: #f5f0e1;
-  --panel: #e8e2d5;
-  --panel-2: #dcd6c8;
-  --line: #a09075;
-  --ink: #3d3226;
-  --mut: #5a4d42;
-  --violet: #c4a076;
-  --fuchsia: #b89476;
-  --indigo: #8b7561;
-  --pink: #a07858;
+  --bg: #1e1c1a;
+  --panel: #2a2722;
+  --panel-2: #35312c;
+  --line: #6b5d4f;
+  --ink: #e0e0e0;
+  --mut: #a0a0a0;
+  --violet: #d4b4a8;
+  --fuchsia: #c0a898;
+  --indigo: #a89078;
+  --pink: #c89880;
 }
 
 html,
@@ -106,7 +106,7 @@ body {
 
 /* ---------- Animaciones de estado ---------- */
 
-/* Anillo de grabación activa: brillo suave que respira (Botón 1) */
+/* Anillo de grabaciÃ³n activa: brillo suave que respira (BotÃ³n 1) */
 @keyframes rec-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.45); }
   70%  { box-shadow: 0 0 0 14px rgba(167, 139, 250, 0); }
@@ -132,7 +132,7 @@ body {
   animation: dot-throb 1s ease-in-out infinite;
 }
 
-/* Ecualizador visible mientras la voz está hablando */
+/* Ecualizador visible mientras la voz estÃ¡ hablando */
 .eq-bar {
   display: inline-block;
   width: 3px;
@@ -145,7 +145,7 @@ body {
   50%      { height: 18px; opacity: 1; }
 }
 
-/* Aparición al hacer scroll */
+/* ApariciÃ³n al hacer scroll */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -179,3 +179,4 @@ body {
   opacity: 0.32;
   cursor: not-allowed;
 }
+
