@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+/* ============================================================
+   Asistente GEM · Hoja de estilos base
+   Paleta "noche violeta": petróleo profundo con tinte violeta,
+   violeta real (grabación), fuchsia (voz), índigo (pausa) y
+   fuchsia brillante (envío). Todo vira al violeta.
+   ============================================================ */
+
+:root {
+  --bg: #0c0a1a;
+  --panel: #15102b;
+  --panel-2: #1c1538;
+  --line: #2d1f55;
+  --ink: #ede9fe;
+  --mut: #9b91b8;
+  --violet: #a78bfa;
+  --fuchsia: #f0abfc;
+  --indigo: #818cf8;
+  --pink: #e879f9;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background-color: var(--bg);
+  color: var(--ink);
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: "Unbounded", "IBM Plex Sans", sans-serif;
+}
+.font-mono-gem {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+::selection {
+  background: rgba(232, 121, 249, 0.32);
+  color: #fdf4ff;
+}
+
+/* Scrollbar discreto */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #2a1f55 transparent;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2a1f55;
+  border-radius: 8px;
+}
+
+/* ---------- Fondo ambiental por capas ---------- */
+.gem-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  background:
+    radial-gradient(1100px 600px at 12% -8%, rgba(232, 121, 249, 0.10), transparent 60%),
+    radial-gradient(900px 560px at 92% 108%, rgba(167, 139, 250, 0.10), transparent 60%),
+    radial-gradient(700px 420px at 70% 20%, rgba(129, 140, 248, 0.06), transparent 60%),
+    var(--bg);
+}
+.gem-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(237, 233, 254, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(237, 233, 254, 0.03) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, #000 40%, transparent 100%);
+}
+.gem-bg .drift {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: 0.55;
+  animation: drift 26s ease-in-out infinite alternate;
+}
+.gem-bg .drift-a {
+  width: 480px;
+  height: 480px;
+  left: -140px;
+  top: -160px;
+  background: rgba(232, 121, 249, 0.14);
+}
+.gem-bg .drift-b {
+  width: 420px;
+  height: 420px;
+  right: -120px;
+  bottom: -140px;
+  background: rgba(167, 139, 250, 0.13);
+  animation-delay: -12s;
+}
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to   { transform: translate3d(60px, 40px, 0) scale(1.12); }
+}
+
+/* ---------- Animaciones de estado ---------- */
+
+/* Anillo de grabación activa: brillo suave que respira (Botón 1) */
+@keyframes rec-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(167, 139, 250, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+}
+.rec-pulse {
+  animation: rec-pulse 1.6s ease-out infinite;
+}
+
+@keyframes dot-blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+.dot-blink {
+  animation: dot-blink 1.1s ease-in-out infinite;
+}
+
+@keyframes dot-throb {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50%      { transform: scale(1.5); opacity: 0.5; }
+}
+.dot-throb {
+  animation: dot-throb 1s ease-in-out infinite;
+}
+
+/* Ecualizador visible mientras la voz está hablando */
+.eq-bar {
+  display: inline-block;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--fuchsia);
+  animation: eq 1s ease-in-out infinite;
+}
+@keyframes eq {
+  0%, 100% { height: 5px; opacity: 0.5; }
+  50%      { height: 18px; opacity: 1; }
+}
+
+/* Aparición al hacer scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* La respuesta "llega" con una suave entrada */
+@keyframes answer-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+.answer-in {
+  animation: answer-in 0.45s ease both;
+}
+
+/* Botones fijos: realce al pasar el cursor */
+.ctrl-btn {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+.ctrl-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+.ctrl-btn:not(:disabled):active {
+  transform: translateY(0) scale(0.985);
+}
+.ctrl-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
