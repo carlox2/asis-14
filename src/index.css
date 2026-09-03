@@ -2,22 +2,21 @@
 
 /* ============================================================
    Asistente GEM · Hoja de estilos base
-   Paleta "noche violeta": petróleo profundo con tinte violeta,
-   violeta real (grabación), fuchsia (voz), índigo (pausa) y
-   fuchsia brillante (envío). Todo vira al violeta.
+   Paleta "crema académica": beige cálido con tonos tierra,
+   gris oscuro para el texto, acentos en óxido quemado.
    ============================================================ */
 
 :root {
-  --bg: #0c0a1a;
-  --panel: #15102b;
-  --panel-2: #1c1538;
-  --line: #2d1f55;
-  --ink: #ede9fe;
-  --mut: #9b91b8;
-  --violet: #a78bfa;
-  --fuchsia: #f0abfc;
-  --indigo: #818cf8;
-  --pink: #e879f9;
+  --bg: #f5f0e1;
+  --panel: #e8e2d5;
+  --panel-2: #dcd6c8;
+  --line: #a09075;
+  --ink: #3d3226;
+  --mut: #5a4d42;
+  --violet: #c4a076;
+  --fuchsia: #b89476;
+  --indigo: #8b7561;
+  --pink: #a07858;
 }
 
 html,
