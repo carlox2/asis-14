@@ -1,22 +1,22 @@
 ﻿@import "tailwindcss";
 
 /* ============================================================
-   Asistente GEM Â· Hoja de estilos base
-   Paleta "crema acadÃ©mica": beige cÃ¡lido con tonos tierra,
-   gris oscuro para el texto, acentos en Ã³xido quemado.
+   Asistente GEM · Hoja de estilos base
+   Paleta "ocre académico": tonos tierra oscuros, texto legible,
+   acentos ocre/quemado. Fondo oscuro pero cálido.
    ============================================================ */
 
 :root {
-  --bg: #1e1c1a;
-  --panel: #2a2722;
-  --panel-2: #35312c;
-  --line: #6b5d4f;
-  --ink: #e0e0e0;
-  --mut: #a0a0a0;
-  --violet: #d4b4a8;
-  --fuchsia: #c0a898;
-  --indigo: #a89078;
-  --pink: #c89880;
+  --bg: #3d2f1f;
+  --panel: #4a3828;
+  --panel-2: #574532;
+  --line: #a07855;
+  --ink: #e8e4dc;
+  --mut: #c4a86c;
+  --violet: #c4a076;
+  --fuchsia: #b89476;
+  --indigo: #8b7561;
+  --pink: #a07858;
 }
 
 html,
@@ -62,9 +62,9 @@ body {
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(1100px 600px at 12% -8%, rgba(232, 121, 249, 0.10), transparent 60%),
-    radial-gradient(900px 560px at 92% 108%, rgba(167, 139, 250, 0.10), transparent 60%),
-    radial-gradient(700px 420px at 70% 20%, rgba(129, 140, 248, 0.06), transparent 60%),
+    radial-gradient(1100px 600px at 12% -8%, rgba(232, 121, 249, 0.08), transparent 60%),
+    radial-gradient(900px 560px at 92% 108%, rgba(167, 139, 250, 0.08), transparent 60%),
+    radial-gradient(700px 420px at 70% 20%, rgba(129, 140, 248, 0.05), transparent 60%),
     var(--bg);
 }
 .gem-bg::before {
@@ -89,14 +89,14 @@ body {
   height: 480px;
   left: -140px;
   top: -160px;
-  background: rgba(232, 121, 249, 0.14);
+  background: rgba(232, 121, 249, 0.12);
 }
 .gem-bg .drift-b {
   width: 420px;
   height: 420px;
   right: -120px;
   bottom: -140px;
-  background: rgba(167, 139, 250, 0.13);
+  background: rgba(167, 139, 250, 0.11);
   animation-delay: -12s;
 }
 @keyframes drift {
@@ -106,7 +106,7 @@ body {
 
 /* ---------- Animaciones de estado ---------- */
 
-/* Anillo de grabaciÃ³n activa: brillo suave que respira (BotÃ³n 1) */
+/* Anillo de grabación activa: brillo suave que respira (Botón 1) */
 @keyframes rec-pulse {
   0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.45); }
   70%  { box-shadow: 0 0 0 14px rgba(167, 139, 250, 0); }
@@ -124,15 +124,15 @@ body {
   animation: dot-blink 1.1s ease-in-out infinite;
 }
 
-@keyframes dot-throb {
+/* @keyframes dot-throb {
   0%, 100% { transform: scale(1); opacity: 0.9; }
   50%      { transform: scale(1.5); opacity: 0.5; }
 }
 .dot-throb {
   animation: dot-throb 1s ease-in-out infinite;
-}
+} */
 
-/* Ecualizador visible mientras la voz estÃ¡ hablando */
+/* Ecualizador visible mientras la voz está hablando */
 .eq-bar {
   display: inline-block;
   width: 3px;
@@ -145,7 +145,7 @@ body {
   50%      { height: 18px; opacity: 1; }
 }
 
-/* ApariciÃ³n al hacer scroll */
+/* Aparición al hacer scroll */
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -180,3 +180,185 @@ body {
   cursor: not-allowed;
 }
 
+/* ---------- Estados de fase ---------- */
+
+/* Anillo de grabación activa: brillo suave que respira (Botón 1) */
+@keyframes rec-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(167, 139, 250, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+}
+.rec-pulse {
+  animation: rec-pulse 1.6s ease-out infinite;
+}
+
+/* Estado: idle */
+.idle-dot {
+  animation: dot-blink 1.1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--mut);
+  border-radius: 50%;
+}
+
+/* Estado: starting */
+.starting-dot {
+  animation: dot-throb 1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--fuchsia);
+  border-radius: 50%;
+}
+
+/* Estado: recording */
+.recording-dot {
+  animation: dot-blink 1.1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--violet);
+  border-radius: 50%;
+}
+
+/* Estado: paused */
+.paused-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--indigo);
+  border-radius: 50%;
+}
+
+/* Estado: sending */
+.sending-dot {
+  animation: dot-throb 1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--fuchsia);
+  border-radius: 50%;
+}
+
+/* Estado: processing */
+.processing-dot {
+  animation: dot-throb 1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--indigo);
+  border-radius: 50%;
+}
+
+/* Estado: speaking */
+.speaking-dot {
+  animation: dot-blink 1.1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--fuchsia);
+  border-radius: 50%;
+}
+
+/* Estado: voicePaused */
+.voicePaused-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--fuchsia);
+  border-radius: 50%;
+}
+
+/* ---------- Texto y títulos ---------- */
+
+.text-ocre {
+  color: var(--ink);
+}
+
+.text-ocre-subtle {
+  color: var(--mut);
+}
+
+.bg-ocre-dark {
+  background-color: var(--bg);
+}
+
+.bg-panel-dark {
+  background-color: var(--panel);
+}
+
+.border-ocre {
+  border-color: var(--line);
+}
+
+/* ---------- Encabezado ---------- */
+
+header {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------- Controles ---------- */
+
+.ctrl-btn {
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+}
+.ctrl-btn:not(:disabled):hover {
+  transform: translateY(-2px);
+}
+.ctrl-btn:not(:disabled):active {
+  transform: translateY(0) scale(0.985);
+}
+.ctrl-btn:disabled {
+  opacity: 0.32;
+  cursor: not-allowed;
+}
+
+.ctrl-btn.border-ocre {
+  border: 1px solid var(--line);
+  background-color: var(--panel);
+}
+
+.ctrl-btn.border-ocre:hover {
+  border-color: var(--violet);
+}
+
+/* ---------- Puntuación y indicadores ---------- */
+
+.status-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ---------- Área de respuesta ---------- */
+
+.response-text {
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* ---------- Errores ---------- */
+
+.error-box {
+  border-left: 3px solid var(--violet);
+  background: rgba(var(--r, 167), var(--g, 139), var(--b, 250), 0.08);
+  color: var(--ink);
+  padding: 1rem;
+  border-radius: 4px;
+}
+
+/* ---------- Bitácora ---------- */
+
+.history-item {
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+/* ---------- Configuración ---------- */
+
+.setting-item {
+  border-bottom: 1px solid var(--line);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (max-width: 768px) {
+  .gem-bg {
+    radial-gradient: radial-gradient(800px 500px at 20% -10%, rgba(232, 121, 249, 0.06), transparent 50%),
+                   radial-gradient(600px 400px at 80% 90%, rgba(167, 139, 250, 0.05), transparent 50%);
+  }
+}
