@@ -2,21 +2,30 @@
 
 /* ============================================================
    Asistente GEM · Hoja de estilos base
-   Paleta "ocre académico": tonos tierra oscuros, texto legible,
-   acentos ocre/quemado. Fondo oscuro pero cálido.
+   Paleta "papel viejo sobre cuero": marrón oscuro cálido de fondo
+   con texto en marrón claro (ocre/ámbar). Estética tipo bitácora
+   de estudio, sin grises neutros.
    ============================================================ */
 
 :root {
-  --bg: #3d2f1f;
-  --panel: #4a3828;
-  --panel-2: #574532;
-  --line: #a07855;
-  --ink: #e8e4dc;
-  --mut: #c4a86c;
-  --violet: #c4a076;
-  --fuchsia: #b89476;
-  --indigo: #8b7561;
-  --pink: #a07858;
+  /* Fondo: marrón oscuro cálido, casi café con leche torrefacto */
+  --bg: #2b1d12;
+  /* Paneles: un escalón más claro que el fondo para que destaquen */
+  --panel: #2b1d12;
+  --panel-2: #2b1d12;
+  /* Bordes: marrón medio, usados con baja opacidad en el markup */
+  --line: #8a6238;
+  /* Texto principal: marrón CLARO (ocre dorado) — sustituye al blanco
+     crema anterior para que toda la página se vea en la misma
+     familia cromática */
+  --ink: #d9b985;
+  /* Texto secundario / labels, un poco más oscuro para jerarquía */
+  --mut: #a8855a;
+  /* Acentos cálidos (sustitutos del antiguo violeta/fuchsia/indigo) */
+  --violet: #d9b985;
+  --fuchsia: #c8a06a;
+  --indigo: #8a6a48;
+  --pink: #b08755;
 }
 
 html,
@@ -25,33 +34,34 @@ body {
   min-height: 100%;
   background-color: var(--bg);
   color: var(--ink);
-  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  font-family: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .font-display {
-  font-family: "Unbounded", "IBM Plex Sans", sans-serif;
+  font-family: "Unbounded", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
 }
 .font-mono-gem {
-  font-family: "IBM Plex Mono", ui-monospace, monospace;
+  font-family: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace;
 }
 
 ::selection {
-  background: rgba(232, 121, 249, 0.32);
-  color: #fdf4ff;
+  background: rgba(217, 185, 133, 0.32);
+  color: #2b1d12;
 }
 
-/* Scrollbar discreto */
+/* Scrollbar discreto (en tonos marrones) */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #2a1f55 transparent;
+  scrollbar-color: #5a3d24 transparent;
 }
 *::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 *::-webkit-scrollbar-thumb {
-  background: #2a1f55;
+  background: #5a3d24;
   border-radius: 8px;
 }
 
@@ -62,9 +72,9 @@ body {
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(1100px 600px at 12% -8%, rgba(232, 121, 249, 0.08), transparent 60%),
-    radial-gradient(900px 560px at 92% 108%, rgba(167, 139, 250, 0.08), transparent 60%),
-    radial-gradient(700px 420px at 70% 20%, rgba(129, 140, 248, 0.05), transparent 60%),
+    radial-gradient(1100px 600px at 12% -8%, rgba(217, 185, 133, 0.06), transparent 60%),
+    radial-gradient(900px 560px at 92% 108%, rgba(184, 135, 85, 0.06), transparent 60%),
+    radial-gradient(700px 420px at 70% 20%, rgba(168, 133, 90, 0.04), transparent 60%),
     var(--bg);
 }
 .gem-bg::before {
@@ -72,8 +82,8 @@ body {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(237, 233, 254, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(237, 233, 254, 0.03) 1px, transparent 1px);
+    linear-gradient(rgba(217, 185, 133, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(217, 185, 133, 0.025) 1px, transparent 1px);
   background-size: 44px 44px;
   mask-image: radial-gradient(ellipse 90% 80% at 50% 20%, #000 40%, transparent 100%);
 }
@@ -89,14 +99,14 @@ body {
   height: 480px;
   left: -140px;
   top: -160px;
-  background: rgba(232, 121, 249, 0.12);
+  background: rgba(217, 185, 133, 0.12);
 }
 .gem-bg .drift-b {
   width: 420px;
   height: 420px;
   right: -120px;
   bottom: -140px;
-  background: rgba(167, 139, 250, 0.11);
+  background: rgba(217, 185, 133, 0.11);
   animation-delay: -12s;
 }
 @keyframes drift {
@@ -108,9 +118,9 @@ body {
 
 /* Anillo de grabación activa: brillo suave que respira (Botón 1) */
 @keyframes rec-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.45); }
-  70%  { box-shadow: 0 0 0 14px rgba(167, 139, 250, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(217, 185, 133, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(217, 185, 133, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(217, 185, 133, 0); }
 }
 .rec-pulse {
   animation: rec-pulse 1.6s ease-out infinite;
@@ -184,9 +194,9 @@ body {
 
 /* Anillo de grabación activa: brillo suave que respira (Botón 1) */
 @keyframes rec-pulse {
-  0%   { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0.45); }
-  70%  { box-shadow: 0 0 0 14px rgba(167, 139, 250, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
+  0%   { box-shadow: 0 0 0 0 rgba(217, 185, 133, 0.45); }
+  70%  { box-shadow: 0 0 0 14px rgba(217, 185, 133, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(217, 185, 133, 0); }
 }
 .rec-pulse {
   animation: rec-pulse 1.6s ease-out infinite;
@@ -358,7 +368,7 @@ header {
 
 @media (max-width: 768px) {
   .gem-bg {
-    radial-gradient: radial-gradient(800px 500px at 20% -10%, rgba(232, 121, 249, 0.06), transparent 50%),
-                   radial-gradient(600px 400px at 80% 90%, rgba(167, 139, 250, 0.05), transparent 50%);
+    radial-gradient: radial-gradient(800px 500px at 20% -10%, rgba(217, 185, 133, 0.06), transparent 50%),
+                   radial-gradient(600px 400px at 80% 90%, rgba(217, 185, 133, 0.05), transparent 50%);
   }
 }

@@ -3,24 +3,24 @@
    ------------------------------------------------------------
    Consola de estudio 100% frontend (paleta violeta):
 
-   Â· BotÃ³n 1 (Grabar/Pausar)  â†’ MediaRecorder con pause()/resume(),
-     acumula TODO en un Ãºnico Blob sin importar las pausas.
-   Â· BotÃ³n 2 (Enviar)         â†’ stop(), Base64 y POST a Gemini
+   · Botón 1 (Grabar/Pausar)  → MediaRecorder con pause()/resume(),
+     acumula TODO en un único Blob sin importar las pausas.
+   · Botón 2 (Enviar)         → stop(), Base64 y POST a Gemini
      con `inlineData`. Solo se habilita si hay audio grabado.
-   Â· BotÃ³n 3 (Play/Pausa voz) â†’ speechSynthesis.pause()/resume().
+   · Botón 3 (Play/Pausa voz) → speechSynthesis.pause()/resume().
 
    Los 3 botones viven en una barra fija (sticky): mismo lugar,
-   mismo tamaÃ±o, siempre. Solo cambian sus etiquetas/estados.
+   mismo tamaño, siempre. Solo cambian sus etiquetas/estados.
 
    CICLO CONTINUO (punto 5): al presionar Grabar tras una respuesta,
    se ejecuta un reset limpio:
      1. speechSynthesis.cancel()
      2. audioChunks = []
      3. nueva instancia de MediaRecorder (clip 100% independiente)
-     4. estado visual â†’ "Grabandoâ€¦" sin recargar la pÃ¡gina
+     4. estado visual → "Grabando…" sin recargar la página
    ============================================================ */
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import Waveform from "./components/Waveform";
 import type { WaveMode } from "./components/Waveform";
 import {
@@ -63,7 +63,7 @@ import {
 
 type Phase =
   | "idle"
-  | "starting" // adquiriendo micrÃ³fono (transitorio)
+  | "starting" // adquiriendo micrófono (transitorio)
   | "recording"
   | "paused"
   | "sending"
@@ -108,7 +108,7 @@ function formatBytes(n: number): string {
   return `${(n / 1024).toFixed(1)} KB`;
 }
 
-/** Elige la mejor voz en espaÃ±ol disponible. */
+/** Elige la mejor voz en español disponible. */
 function pickSpanishVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice | null {
   if (!voices.length) return null;
   return (
@@ -121,7 +121,7 @@ function pickSpanishVoice(voices: SpeechSynthesisVoice[]): SpeechSynthesisVoice 
 
 /* ---------------- Piezas de UI ---------------- */
 
-/** Barras animadas visibles mientras la voz estÃ¡ hablando. */
+/** Barras animadas visibles mientras la voz está hablando. */
 function Equalizer() {
   return (
     <span className="inline-flex items-end gap-[3px]" aria-hidden>
@@ -164,19 +164,19 @@ interface ControlButtonProps {
   hint: string;
   onClick: () => void;
   disabled?: boolean;
-  active?: boolean; // grabaciÃ³n activa â†’ anillo pulsante
+  active?: boolean; // grabación activa → anillo pulsante
 }
 
 /**
- * Uno de los 3 botones de la fila fija. TamaÃ±o y posiciÃ³n constantes;
- * solo cambian etiqueta, Ã­cono y estado habilitado.
+ * Uno de los 3 botones de la fila fija. Tamaño y posición constantes;
+ * solo cambian etiqueta, ícono y estado habilitado.
  */
 function ControlButton({ accent, icon, label, hint, onClick, disabled, active }: ControlButtonProps) {
   const hoverBorder: Record<Accent, string> = {
-    coral: "hover:border-#[c4a076]/70 hover:shadow-[0_10px_34px_-14px_rgba(167,139,250,0.55)]",
-    cyan: "hover:border-#[a07858]/70 hover:shadow-[0_10px_34px_-14px_rgba(232,121,249,0.5)]",
-    mint: "hover:border-#[b89476]/70 hover:shadow-[0_10px_34px_-14px_rgba(240,171,252,0.5)]",
-    amber: "hover:border-#[8b7561]/70 hover:shadow-[0_10px_34px_-14px_rgba(129,140,248,0.5)]",
+    coral: "hover:border-#[c4a076]/70 hover:shadow-[0_10px_34px_-14px_rgba(217,185,133,0.55)]",
+    cyan: "hover:border-#[a07858]/70 hover:shadow-[0_10px_34px_-14px_rgba(200,160,106,0.5)]",
+    mint: "hover:border-#[b89476]/70 hover:shadow-[0_10px_34px_-14px_rgba(184,135,85,0.5)]",
+    amber: "hover:border-#[8b7561]/70 hover:shadow-[0_10px_34px_-14px_rgba(138,106,72,0.5)]",
   };
   return (
     <button
@@ -189,18 +189,18 @@ function ControlButton({ accent, icon, label, hint, onClick, disabled, active }:
     >
       {active && <span className="rec-pulse pointer-events-none absolute inset-0 rounded-xl" aria-hidden />}
       <span className={ACCENT_TEXT[accent]}>{icon}</span>
-      <span className="text-sm font-semibold tracking-wide text-[#3d3226]">{label}</span>
-      <span className="font-mono-gem text-[10px] uppercase tracking-[0.14em] text-[#5a4d42]">{hint}</span>
+      <span className="text-sm font-semibold tracking-wide text-[#d9b985]">{label}</span>
+      <span className="font-mono-gem text-[10px] uppercase tracking-[0.14em] text-[#a8855a]">{hint}</span>
     </button>
   );
 }
 
-/* ---------------- AplicaciÃ³n principal ---------------- */
+/* ---------------- Aplicación principal ---------------- */
 
 export default function App() {
   /* ----- Estado visible ----- */
   const [phase, setPhase] = useState<Phase>("idle");
-  const [status, setStatus] = useState("En espera â€” presiona Grabar para comenzar");
+  const [status, setStatus] = useState("En espera — presiona Grabar para comenzar");
   const [response, setResponse] = useState("");
   const [error, setError] = useState("");
   const [elapsed, setElapsed] = useState(0);
@@ -216,23 +216,23 @@ export default function App() {
   const [outputDevices, setOutputDevices] = useState<AudioDevice[]>([]);
   const [selectedInputId, setSelectedInputId] = useState<string | null>(() => getSavedInputId());
   const [selectedOutputId, setSelectedOutputId] = useState<string | null>(() => getSavedOutputId());
-  /** Nombre del dispositivo de mic que el stream estÃ¡ usando AHORA MISMO
+  /** Nombre del dispositivo de mic que el stream está usando AHORA MISMO
    *  (lo leemos de `track.getSettings().label` tras cada getUserMedia). */
   const [activeMicLabel, setActiveMicLabel] = useState<string>("");
-  /** Mensaje diagnÃ³stico adicional (p.ej. si el deviceId exacto no se pudo aplicar). */
+  /** Mensaje diagnóstico adicional (p.ej. si el deviceId exacto no se pudo aplicar). */
   const [micDiagnostic, setMicDiagnostic] = useState<string>("");
 
   /* ----- Referencias internas (evitan closures obsoletos) ----- */
   const phaseRef = useRef<Phase>("idle");
   const streamRef = useRef<MediaStream | null>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
-  const chunksRef = useRef<Blob[]>([]); // â† el arreglo que acumula TODO el clip
+  const chunksRef = useRef<Blob[]>([]); // → el arreglo que acumula TODO el clip
   const mimeRef = useRef("audio/webm");
   const analyserRef = useRef<AnalyserNode | null>(null);
   const mediaSourceRef = useRef<MediaStreamAudioSourceNode | null>(null);
   const sendRequestedRef = useRef(false);
   const tickRef = useRef<ReturnType<typeof setInterval> | null>(null); // beep cada 2 s
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null); // cronÃ³metro
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null); // cronómetro
   const thinkRef = useRef<ReturnType<typeof setInterval> | null>(null); // beep "pensando"
   const keepAliveRef = useRef<ReturnType<typeof setInterval> | null>(null); // legacy: ya no se usa, conservado por compat
   const lastTickRef = useRef(0);
@@ -260,7 +260,7 @@ export default function App() {
     tickRef.current = timerRef.current = thinkRef.current = null;
   }, []);
 
-  /* ----- Carga de voces (SpeechSynthesis es asÃ­ncrono) ----- */
+  /* ----- Carga de voces (SpeechSynthesis es asíncrono) ----- */
   useEffect(() => {
     if (!("speechSynthesis" in window)) return;
     const load = () => setVoices(window.speechSynthesis.getVoices());
@@ -273,8 +273,8 @@ export default function App() {
 
   /* ----- Watcher de dispositivos de audio (entrada y salida) -----
    * Mantiene la lista viva ante `devicechange` (BT se conecta/desconecta
-   * en caliente) y la refresca despuÃ©s del primer getUserMedia, porque
-   * hasta entonces Chrome entrega labels vacÃ­os. */
+   * en caliente) y la refresca después del primer getUserMedia, porque
+   * hasta entonces Chrome entrega labels vacíos. */
   useEffect(() => {
     let cancelled = false;
     void startDeviceWatcher().then((d) => {
@@ -295,16 +295,16 @@ export default function App() {
 
   /* ----- Aplica el dispositivo de salida elegido al motor de audio -----
    * Los sfx se reproducen por <audio> elements (con setSinkId), no por
-   * el AudioContext â€” en Chrome Android el setSinkId del AudioContext
-   * no funciona de forma consistente. Por eso acÃ¡ solo actualizamos
-   * el sinkId del elemento de warm-up (para que el TTS tambiÃ©n
+   * el AudioContext — en Chrome Android el setSinkId del AudioContext
+   * no funciona de forma consistente. Por eso acá solo actualizamos
+   * el sinkId del elemento de warm-up (para que el TTS también
    * "vea" la salida BT). */
   useEffect(() => {
     setWarmupSinkId(selectedOutputId);
   }, [selectedOutputId]);
 
-  /* ----- Auto-limpia la selecciÃ³n si el dispositivo guardado ya no
-   * existe (tÃ­pico cuando se desconectan los auriculares BT). */
+  /* ----- Auto-limpia la selección si el dispositivo guardado ya no
+   * existe (típico cuando se desconectan los auriculares BT). */
   useEffect(() => {
     if (selectedInputId && inputDevices.length > 0 && !inputDevices.some((d) => d.deviceId === selectedInputId)) {
       setSelectedInputId(null);
@@ -319,7 +319,7 @@ export default function App() {
   }, [outputDevices, selectedOutputId]);
 
   /* ----- Helper: arma las constraints de getUserMedia con la
-   * selecciÃ³n de entrada del usuario. Si no hay selecciÃ³n, pide el
+   * selección de entrada del usuario. Si no hay selección, pide el
    * dispositivo por defecto del sistema. */
   const buildAudioConstraints = useCallback((): MediaStreamConstraints => {
     if (selectedInputId) {
@@ -369,39 +369,39 @@ export default function App() {
     timerRef.current = null;
   }, []);
 
-  /* ============ SÃNTESIS DE VOZ (Salida) ============
-   * Decisiones de diseÃ±o (problemas reportados en S25 Ultra):
+  /* ============ SÍNTESIS DE VOZ (Salida) ============
+   * Decisiones de diseño (problemas reportados en S25 Ultra):
    *
-   *  Â· Antes de hablar, hacemos un "warm-up" de salida: reproducimos
+   *  · Antes de hablar, hacemos un "warm-up" de salida: reproducimos
    *    ~100 ms de silencio por un <audio> con setSinkId aplicado al
    *    dispositivo de salida elegido. En Android, este truco "engancha"
-   *    el destino BT / USB-C; sin Ã©l, speechSynthesis puede salir por
-   *    el altavoz del telÃ©fono.
+   *    el destino BT / USB-C; sin él, speechSynthesis puede salir por
+   *    el altavoz del teléfono.
    *
-   *  Â· Watchdog basado en **polling de synth.speaking cada 500 ms**
+   *  · Watchdog basado en **polling de synth.speaking cada 500 ms**
    *    (no en `onboundary`, que algunos navegadores no disparan). Si
-   *    el utterance dejÃ³ de hablar sin disparar `onend`, lo detectamos
-   *    y finalizamos para que la pÃ¡gina no quede muda.
+   *    el utterance dejó de hablar sin disparar `onend`, lo detectamos
+   *    y finalizamos para que la página no quede muda.
    *
-   *  Â· El viejo keepAlive (pause/resume cada 8 s) se eliminÃ³: en
+   *  · El viejo keepAlive (pause/resume cada 8 s) se eliminó: en
    *    muchos Androids era lo que cortaba el utterance a mitad de frase.
    * ============================================================ */
   const speakWatchdogRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const speakStartTsRef = useRef(0);
-  /** true mientras el utterance estÃ¡ hablando, segÃºn el motor del sistema. */
+  /** true mientras el utterance está hablando, según el motor del sistema. */
   const speakActuallyPlayingRef = useRef(false);
-  /** DuraciÃ³n estimada del utterance (texto / 14 cps â‰ˆ tiempo en ms). */
+  /** Duración estimada del utterance (texto / 14 cps â‰ˆ tiempo en ms). */
   const speakEstimatedMsRef = useRef(0);
   /** Trozos de la respuesta (oraciones). Cada uno es una utterance aparte. */
   const textPartsRef = useRef<string[]>([]);
-  /** Ãndice del trozo que se estÃ¡ hablando o se va a hablar. */
+  /** Índice del trozo que se está hablando o se va a hablar. */
   const partIndexRef = useRef(0);
-  /** PosiciÃ³n (en caracteres) dentro del chunk actual. Se actualiza
+  /** Posición (en caracteres) dentro del chunk actual. Se actualiza
    *  con cada `onboundary`. Se resetea a 0 al arrancar cada chunk.
-   *  En Android Chrome/Brave los boundaries suelen ser por oraciÃ³n
-   *  (no por palabra), asÃ­ que la granularidad es ~oraciÃ³n. */
+   *  En Android Chrome/Brave los boundaries suelen ser por oración
+   *  (no por palabra), así que la granularidad es ~oración. */
   const partCharIndexRef = useRef(0);
-  /** PosiciÃ³n guardada al pausar, para reanudar desde ahÃ­ (slice del
+  /** Posición guardada al pausar, para reanudar desde ahí (slice del
    *  texto del chunk actual). null si pausamos entre chunks. */
   const savedCharIndexRef = useRef<number | null>(null);
   /** true cuando hicimos synth.cancel() nosotros; el onend no debe
@@ -430,8 +430,8 @@ export default function App() {
       partCharIndexRef.current = 0;
       savedCharIndexRef.current = null;
 
-      // Troceamos por oraciones (despuÃ©s de '.', '!', '?', o salto de
-      // lÃ­nea). Cada trozo es una utterance aparte, asÃ­ el pause/resume
+      // Troceamos por oraciones (después de '.', '!', '?', o salto de
+      // línea). Cada trozo es una utterance aparte, así el pause/resume
       // es robusto: cancelamos SOLO el trozo actual y al reanudar
       // empezamos el siguiente con un utterance nuevo (no dependemos
       // del synth.resume() que en Chrome Android suele dejar muda la
@@ -443,16 +443,16 @@ export default function App() {
       textPartsRef.current = parts.length > 0 ? parts : [text];
       partIndexRef.current = 0;
       const totalChars = textPartsRef.current.reduce((acc, p) => acc + p.length, 0);
-      // EstimaciÃ³n cruda: ~13 caracteres por segundo en espaÃ±ol a rate=0.9.
+      // Estimación cruda: ~13 caracteres por segundo en español a rate=0.9.
       speakEstimatedMsRef.current = Math.max(2000, (totalChars / 13) * 1000);
 
-      // Cierra toda la reproducciÃ³n y vuelve a idle.
+      // Cierra toda la reproducción y vuelve a idle.
       const finishAll = (reason: string) => {
         stopWatchdog();
         speakActuallyPlayingRef.current = false;
         if (phaseRef.current === "speaking" || phaseRef.current === "voicePaused") {
           goPhase("idle");
-          setStatus("Listo â€” presiona Grabar para otra pregunta");
+          setStatus("Listo — presiona Grabar para otra pregunta");
         }
         if (typeof console !== "undefined" && reason) {
           // eslint-disable-next-line no-console
@@ -460,14 +460,14 @@ export default function App() {
         }
       };
 
-      // Habla el chunk actual. Si terminÃ³ naturalmente, pasa al
+      // Habla el chunk actual. Si terminó naturalmente, pasa al
       // siguiente. Si fue por nuestro cancel() o pause, no avanza.
       const speakPart = () => {
         if (partIndexRef.current >= textPartsRef.current.length) {
           finishAll("all parts done");
           return;
         }
-        // Si el usuario pausÃ³ o cancelamos, no seguimos.
+        // Si el usuario pausó o cancelamos, no seguimos.
         if (phaseRef.current === "idle" || userPausedRef.current) return;
         partCharIndexRef.current = 0; // reset al arrancar cada chunk
         const partText = textPartsRef.current[partIndexRef.current];
@@ -485,19 +485,19 @@ export default function App() {
           speakActuallyPlayingRef.current = true;
           if (phaseRef.current !== "voicePaused") {
             goPhase("speaking");
-            setStatus("Respondiendoâ€¦");
+            setStatus("Respondiendo…");
           }
         };
-        // onboundary: el motor nos avisa en quÃ© posiciÃ³n del texto
-        // estamos (frontera de palabra/oraciÃ³n). Guardamos el Ãºltimo
+        // onboundary: el motor nos avisa en qué posición del texto
+        // estamos (frontera de palabra/oración). Guardamos el último
         // charIndex para usarlo al reanudar: hacemos slice del chunk
-        // desde acÃ¡ y re-hablamos solo la parte restante, en vez de
+        // desde acá y re-hablamos solo la parte restante, en vez de
         // reiniciar el chunk desde el principio.
         u.onboundary = (ev) => {
           if (typeof ev.charIndex === "number" && ev.charIndex >= 0) {
             partCharIndexRef.current = ev.charIndex;
           }
-          // Si se solicitÃ³ pause, cancelamos justo despuÃ©s de terminar
+          // Si se solicitó pause, cancelamos justo después de terminar
           // la palabra actual, para que se escuche completa antes de pausar.
           if (pauseRequestedRef.current && synth.speaking) {
             synth.cancel();
@@ -512,7 +512,7 @@ export default function App() {
           }
           partIndexRef.current += 1;
           if (partIndexRef.current < textPartsRef.current.length) {
-            // PequeÃ±o delay entre partes para que el motor respire.
+            // Pequeño delay entre partes para que el motor respire.
             setTimeout(() => speakPart(), 40);
           } else {
             finishAll("onend (last part)");
@@ -520,8 +520,8 @@ export default function App() {
         };
         u.onerror = (e) => {
           if (e.error === "canceled" || e.error === "interrupted") {
-            // El motor disparÃ³ onerror en vez de onend para el cancel.
-            // Consumimos el flag de cancelaciÃ³n para que la nueva
+            // El motor disparó onerror en vez de onend para el cancel.
+            // Consumimos el flag de cancelación para que la nueva
             // utterance (creada por el resume) pueda avanzar su onend.
             isCancelingRef.current = false;
             return;
@@ -581,7 +581,7 @@ export default function App() {
           } catch {
             /* no-op */
           }
-          finishAll("watchdog: > 2x estimaciÃ³n");
+          finishAll("watchdog: > 2x estimación");
         }
       }, 500);
     },
@@ -593,9 +593,9 @@ export default function App() {
     return () => stopWatchdog();
   }, [stopWatchdog]);
 
-  /* ============ BOTÃ“N 1 Â· GRABAR / PAUSAR / REANUDAR ============ */
+  /* ============ BOTÃ“N 1 · GRABAR / PAUSAR / REANUDAR ============ */
 
-  /** Detiene pistas y desconecta nodos del micrÃ³fono anterior. */
+  /** Detiene pistas y desconecta nodos del micrófono anterior. */
   const teardownMic = useCallback(() => {
     try {
       if (recorderRef.current && recorderRef.current.state !== "inactive") {
@@ -613,11 +613,11 @@ export default function App() {
   }, []);
 
   /**
-   * RESET LIMPIO (punto 5 del spec): inicia una sesiÃ³n de grabaciÃ³n
-   * totalmente independiente de la anterior, sin recargar la pÃ¡gina.
+   * RESET LIMPIO (punto 5 del spec): inicia una sesión de grabación
+   * totalmente independiente de la anterior, sin recargar la página.
    */
   const beginNewSession = useCallback(async () => {
-    // 1) Cancelar cualquier reproducciÃ³n de voz en curso
+    // 1) Cancelar cualquier reproducción de voz en curso
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     if (keepAliveRef.current) clearInterval(keepAliveRef.current);
     keepAliveRef.current = null;
@@ -634,7 +634,7 @@ export default function App() {
     setError("");
 
     goPhase("starting");
-    setStatus("Solicitando micrÃ³fonoâ€¦");
+    setStatus("Solicitando micrófono…");
     setActiveMicLabel("");
     setMicDiagnostic("");
 
@@ -645,12 +645,12 @@ export default function App() {
       } catch (err) {
         // Si el `deviceId: { exact }` no funciona (dispositivo desconectado,
         // driver que no acepta el constraint, etc.), caemos al default
-        // del sistema. La pÃ¡gina sigue funcionando; el usuario ve un
-        // diagnÃ³stico claro.
+        // del sistema. La página sigue funcionando; el usuario ve un
+        // diagnóstico claro.
         const name = (err as { name?: string })?.name;
         if (name === "OverconstrainedError" || name === "NotFoundError") {
           setMicDiagnostic(
-            "El dispositivo seleccionado no estÃ¡ disponible. Se usÃ³ el micrÃ³fono predeterminado del sistema."
+            "El dispositivo seleccionado no está disponible. Se usó el micrófono predeterminado del sistema."
           );
           stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         } else {
@@ -659,14 +659,14 @@ export default function App() {
       }
       streamRef.current = stream;
 
-      // Leemos el nombre real del dispositivo que el stream estÃ¡ usando.
+      // Leemos el nombre real del dispositivo que el stream está usando.
       const track = stream.getAudioTracks()[0];
       if (track) {
         const settings = track.getSettings?.() ?? {};
-        const label = (settings as { label?: string }).label || track.label || "MicrÃ³fono activo";
+        const label = (settings as { label?: string }).label || track.label || "Micrófono activo";
         setActiveMicLabel(label);
-        // Si el stream terminÃ³ usando un deviceId distinto al que el
-        // usuario eligiÃ³ (porque el exact fallÃ³), lo sincronizamos.
+        // Si el stream terminó usando un deviceId distinto al que el
+        // usuario eligió (porque el exact falló), lo sincronizamos.
         const usedId = (settings as { deviceId?: string }).deviceId;
         if (usedId && usedId !== selectedInputId) {
           setSelectedInputId(usedId);
@@ -674,7 +674,7 @@ export default function App() {
         }
       }
 
-      // Apenas conseguimos un stream vÃ¡lido, los labels de los
+      // Apenas conseguimos un stream válido, los labels de los
       // dispositivos pasan a ser legibles. Refrescamos la lista para
       // que el selector muestre el nombre real del receptor USB/BT.
       try {
@@ -682,7 +682,7 @@ export default function App() {
         setInputDevices(d.inputs);
         setOutputDevices(d.outputs);
       } catch {
-        /* enumeraciÃ³n opcional */
+        /* enumeración opcional */
       }
 
       // Analizador para el osciloscopio (comparte el AudioContext de los beeps)
@@ -694,7 +694,7 @@ export default function App() {
       mediaSourceRef.current = src;
       analyserRef.current = analyser;
 
-      // 3) NUEVA instancia de MediaRecorder â†’ clip 100% independiente
+      // 3) NUEVA instancia de MediaRecorder → clip 100% independiente
       if (typeof MediaRecorder === "undefined") {
         throw new Error("Este navegador no soporta MediaRecorder.");
       }
@@ -718,9 +718,9 @@ export default function App() {
       recorderRef.current = rec;
       rec.start(250);
 
-      // 4) Estado visual â†’ "Grabandoâ€¦"
+      // 4) Estado visual → "Grabando…"
       goPhase("recording");
-      setStatus("Grabandoâ€¦");
+      setStatus("Grabando…");
       sfx.recStart(); // beep agudo de inicio
       tickRef.current = setInterval(() => sfx.recTick(), 2000); // beep cada 2 s
       startChrono();
@@ -730,21 +730,21 @@ export default function App() {
       const name = (err as { name?: string })?.name;
       if (name === "NotAllowedError" || name === "SecurityError") {
         setStatus("En espera");
-        setError("Permiso de micrÃ³fono denegado. ActÃ­valo en la barra del navegador y vuelve a intentarlo.");
+        setError("Permiso de micrófono denegado. Actívalo en la barra del navegador y vuelve a intentarlo.");
       } else if (name === "NotFoundError") {
         setStatus("En espera");
-        setError("No se detectÃ³ ningÃºn micrÃ³fono en este equipo.");
+        setError("No se detectó ningún micrófono en este equipo.");
       } else {
         setStatus("En espera");
-        setError((err as Error)?.message || "No se pudo iniciar la grabaciÃ³n.");
+        setError((err as Error)?.message || "No se pudo iniciar la grabación.");
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clearAllIntervals, teardownMic, goPhase, startChrono, buildAudioConstraints]);
 
   /**
-   * AcciÃ³n del BotÃ³n 1 segÃºn la fase actual.
-   * El botÃ³n NUNCA se mueve ni cambia de tamaÃ±o: solo su etiqueta.
+   * Acción del Botón 1 según la fase actual.
+   * El botón NUNCA se mueve ni cambia de tamaño: solo su etiqueta.
    */
   const onRecordButton = useCallback(() => {
     const p = phaseRef.current;
@@ -756,7 +756,7 @@ export default function App() {
         return;
       }
       goPhase("paused");
-      setStatus("GrabaciÃ³n en pausa â€” puedes leer en silencio");
+      setStatus("Grabación en pausa — puedes leer en silencio");
       sfx.recPause(); // beep grave
       if (tickRef.current) clearInterval(tickRef.current);
       tickRef.current = null;
@@ -769,39 +769,39 @@ export default function App() {
         return;
       }
       goPhase("recording");
-      setStatus("Grabandoâ€¦");
+      setStatus("Grabando…");
       sfx.recStart();
       tickRef.current = setInterval(() => sfx.recTick(), 2000);
       startChrono();
     } else if (p === "idle" || p === "speaking" || p === "voicePaused") {
-      // Nueva pregunta â†’ reset limpio del ciclo completo
+      // Nueva pregunta → reset limpio del ciclo completo
       void beginNewSession();
     }
-    // En 'sending' / 'processing' / 'starting' el botÃ³n estÃ¡ deshabilitado
+    // En 'sending' / 'processing' / 'starting' el botón está deshabilitado
   }, [beginNewSession, goPhase, pauseChrono, startChrono]);
 
-  /* ============ BOTÃ“N 2 Â· ENVIAR A GEMINI ============ */
+  /* ============ BOTÃ“N 2 · ENVIAR A GEMINI ============ */
 
-  /** Cuando el recorder se detiene tras pedir envÃ­o, arma el Blob y procesa. */
+  /** Cuando el recorder se detiene tras pedir envío, arma el Blob y procesa. */
   const handleRecorderStopped = useCallback(async () => {
-    if (!sendRequestedRef.current) return; // stop sin envÃ­o (reset) â†’ ignorar
+    if (!sendRequestedRef.current) return; // stop sin envío (reset) → ignorar
     sendRequestedRef.current = false;
 
     const blob = new Blob(chunksRef.current, { type: mimeRef.current });
     chunksRef.current = [];
     pauseChrono();
-    teardownMic(); // libera el micrÃ³fono entre sesiones
+    teardownMic(); // libera el micrófono entre sesiones
 
     if (blob.size === 0) {
       sfx.error();
       goPhase("idle");
       setStatus("En espera");
-      setError("No se capturÃ³ audio. Verifica el micrÃ³fono y graba de nuevo.");
+      setError("No se capturó audio. Verifica el micrófono y graba de nuevo.");
       return;
     }
 
     goPhase("processing");
-    setStatus("Procesando con Geminiâ€¦");
+    setStatus("Procesando con Gemini…");
     sfx.think();
     thinkRef.current = setInterval(() => sfx.think(), 1000); // beep suave cada segundo
 
@@ -809,17 +809,17 @@ export default function App() {
       const base64 = await blobToBase64(blob);
       const effectiveKey = (keyRef.current || GEMINI_API_KEY).trim();
       if (effectiveKey === "TU_API_KEY_AQUI") {
-        throw new Error("Configura tu API Key de Gemini en el panel de ConfiguraciÃ³n.");
+        throw new Error("Configura tu API Key de Gemini en el panel de Configuración.");
       }
       const rawText = await askGemini(base64, mimeRef.current, effectiveKey);
 
       if (thinkRef.current) clearInterval(thinkRef.current);
       thinkRef.current = null;
 
-      // Gemini a veces devuelve marcas de tiempo tipo transcripciÃ³n
+      // Gemini a veces devuelve marcas de tiempo tipo transcripción
       // (00:05, [00:05], rangos SRT, etiquetas "Speaker 1:"). El system
-      // prompt lo prohÃ­be pero el modelo a veces se "contagia" del audio
-      // de entrada. La funciÃ³n sanitizeResponseText() los limpia como
+      // prompt lo prohíbe pero el modelo a veces se "contagia" del audio
+      // de entrada. La función sanitizeResponseText() los limpia como
       // red de seguridad antes de mostrar/leer el texto.
       const text = sanitizeResponseText(rawText);
 
@@ -838,20 +838,20 @@ export default function App() {
       );
 
       sfx.ready(); // beep alegre: respuesta lista
-      speak(text); // lectura automÃ¡tica en voz alta
+      speak(text); // lectura automática en voz alta
     } catch (err) {
       if (thinkRef.current) clearInterval(thinkRef.current);
       thinkRef.current = null;
       sfx.error();
       goPhase("idle");
       setStatus("En espera");
-      setError((err as Error)?.message || "OcurriÃ³ un error inesperado al procesar el audio.");
+      setError((err as Error)?.message || "Ocurrió un error inesperado al procesar el audio.");
     }
   }, [goPhase, pauseChrono, teardownMic, speak]);
 
   /**
-   * AcciÃ³n del BotÃ³n 2: detiene la grabaciÃ³n (estÃ© grabando o en pausa)
-   * y dispara el envÃ­o. Solo estÃ¡ habilitado cuando hay audio acumulado.
+   * Acción del Botón 2: detiene la grabación (esté grabando o en pausa)
+   * y dispara el envío. Solo está habilitado cuando hay audio acumulado.
    */
   const onSendButton = useCallback(() => {
     const p = phaseRef.current;
@@ -860,30 +860,30 @@ export default function App() {
     tickRef.current = null;
     sendRequestedRef.current = true;
     goPhase("sending");
-    setStatus("Enviando audioâ€¦");
+    setStatus("Enviando audio…");
     sfx.send(); // doble beep ascendente
     try {
-      recorderRef.current?.stop(); // â†’ onstop â†’ handleRecorderStopped
+      recorderRef.current?.stop(); // → onstop → handleRecorderStopped
     } catch {
       void handleRecorderStopped();
     }
   }, [goPhase, handleRecorderStopped]);
 
-  /* ============ BOTÃ“N 3 Â· PLAY / PAUSA DE LA VOZ ============
+  /* ============ BOTÃ“N 3 · PLAY / PAUSA DE LA VOZ ============
    *
-   * DecisiÃ³n clave para Android (Brave/Chrome), donde
+   * Decisión clave para Android (Brave/Chrome), donde
    * `synth.pause()`/`synth.resume()` deja la utterance muda:
    *
-   *  - Pausa: `synth.cancel()` + guardamos el charIndex del Ãºltimo
-   *    `onboundary` (la posiciÃ³n dentro del chunk actual). Marcamos
+   *  - Pausa: `synth.cancel()` + guardamos el charIndex del último
+   *    `onboundary` (la posición dentro del chunk actual). Marcamos
    *    `isCancelingRef.current = true` para que el `onend` no
    *    avance al siguiente chunk.
    *
    *  - Reanudar: NO usamos `synth.resume()`. En su lugar, hacemos
    *    `text.slice(savedCharIndex)` del chunk actual, reemplazamos
-   *    el chunk en `textPartsRef` y re-hablamos desde ahÃ­ con
-   *    `speakPartRef`. La lectura continÃºa desde la Ãºltima frontera
-   *    de palabra/oraciÃ³n, no desde el principio.
+   *    el chunk en `textPartsRef` y re-hablamos desde ahí con
+   *    `speakPartRef`. La lectura continúa desde la última frontera
+   *    de palabra/oración, no desde el principio.
    *
    * Si pausamos ENTRE chunks (entre onend de uno y onstart del
    * siguiente, ventana de 40ms), `synth.speaking` es false y NO
@@ -896,20 +896,20 @@ export default function App() {
     const p = phaseRef.current;
 
     if (p === "speaking") {
-      // PAUSA: guardamos la posiciÃ³n del carÃ¡cter.
-      // Si hay evento onboundary, partCharIndexRef.current ya tiene la posiciÃ³n
-      // exacta del lÃ­mite de palabra. Si no (Android), usamos tiempo transcurrido
-      // como fallback: ~13 chars/seg a rate=0.5 en espaÃ±ol.
+      // PAUSA: guardamos la posición del carácter.
+      // Si hay evento onboundary, partCharIndexRef.current ya tiene la posición
+      // exacta del límite de palabra. Si no (Android), usamos tiempo transcurrido
+      // como fallback: ~13 chars/seg a rate=0.5 en español.
       userPausedRef.current = true;
       isCancelingRef.current = true; // onend NO avanza al chunk siguiente
 
-      // Guardamos posiciÃ³n mid-chunk usando onboundary + fallback de tiempo.
+      // Guardamos posición mid-chunk usando onboundary + fallback de tiempo.
       let savedPos: number | null = null;
       if (synth.speaking && partCharIndexRef.current > 0) {
         savedPos = partCharIndexRef.current;
       } else if (synth.speaking && speakStartTsRef.current > 0) {
-        // Fallback: estimar posiciÃ³n basado en tiempo transcurrido desde onstart.
-        // La utterance habla a rate=0.5, por lo que ~7 chars/seg en espaÃ±ol
+        // Fallback: estimar posición basado en tiempo transcurrido desde onstart.
+        // La utterance habla a rate=0.5, por lo que ~7 chars/seg en español
         // (13 chars/seg a rate=0.9 * 0.5/0.9 â‰ˆ 7.2).
         const elapsed = Date.now() - speakStartTsRef.current;
         const estimatedPos = Math.floor(elapsed / 1000 * 7);
@@ -932,8 +932,8 @@ export default function App() {
       const savedIdx = savedCharIndexRef.current;
       savedCharIndexRef.current = null;
 
-      // Si guardamos una posiciÃ³n mid-chunk, hacemos slice del chunk
-      // actual desde ahÃ­. Reemplazamos el chunk en textPartsRef y
+      // Si guardamos una posición mid-chunk, hacemos slice del chunk
+      // actual desde ahí. Reemplazamos el chunk en textPartsRef y
       // speakPart() habla la parte restante desde el principio.
       if (savedIdx !== null && savedIdx >= 0) {
         const partText = textPartsRef.current[partIndexRef.current];
@@ -950,18 +950,18 @@ export default function App() {
       }
 
       userPausedRef.current = false;
-      // NO reseteamos isCancelingRef aquÃ­: el onend de la utterance
+      // NO reseteamos isCancelingRef aquí: el onend de la utterance
       // vieja (la que cancelamos en la pausa) va a dispararse apenas
       // el motor procese el cancel, y necesita ver isCancelingRef=true
-      // para devolver sin avanzar. Si lo resetamos antes, podrÃ­a leer
+      // para devolver sin avanzar. Si lo resetamos antes, podría leer
       // false, avanzar partIndexRef y romper la cadena.
       goPhase("speaking");
-      setStatus("Respondiendoâ€¦");
-      // PequeÃ±o delay para que el motor libere la utterance cancelada
+      setStatus("Respondiendo…");
+      // Pequeño delay para que el motor libere la utterance cancelada
       // antes de encolar la nueva.
       setTimeout(() => speakPartRef.current?.(), 120);
     } else if (responseRef.current) {
-      // Lectura terminada â†’ reproducir de nuevo desde el principio.
+      // Lectura terminada → reproducir de nuevo desde el principio.
       sfx.ready();
       try {
         synth.cancel();
@@ -993,7 +993,7 @@ export default function App() {
   const playHistoryItem = useCallback(
     (item: HistoryItem) => {
       // Sanitiza por si el item es antiguo (guardado antes del fix
-      // que limpia timecodes de la transcripciÃ³n).
+      // que limpia timecodes de la transcripción).
       const clean = sanitizeResponseText(item.text);
       responseRef.current = clean;
       setResponse(clean);
@@ -1028,7 +1028,7 @@ export default function App() {
 
       {/* ---------- Encabezado ---------- */}
       <header className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 pb-4 pt-6 sm:px-6">
-        <h1 className="font-display text-2xl font-bold tracking-[0.18em] text-[#3d3226] sm:text-3xl">
+        <h1 className="font-display text-2xl font-bold tracking-[0.18em] text-[#d9b985] sm:text-3xl">
           ASIST. 14
         </h1>
         <div className="flex items-center gap-2">
@@ -1048,7 +1048,7 @@ export default function App() {
             onClick={toggleMute}
             title={muted ? "Activar sonidos" : "Silenciar sonidos"}
             aria-label={muted ? "Activar sonidos" : "Silenciar sonidos"}
-            className="ctrl-btn grid h-10 w-10 place-items-center rounded-xl border border-[#a09075] bg-[#e8e2d5] text-[#5a4d42] hover:border-[#a07858]/60 hover:text-[#3d3226]"
+            className="ctrl-btn grid h-10 w-10 place-items-center rounded-xl border border-[#6b4a2b] bg-[#3a2818] text-[#a8855a] hover:border-[#a07858]/60 hover:text-[#d9b985]"
           >
             {muted ? <SpeakerOffIcon size={19} /> : <SpeakerOnIcon size={19} />}
           </button>
@@ -1056,9 +1056,9 @@ export default function App() {
       </header>
 
       {/* ---------- FILA DE CONTROLES: 3 botones fijos, siempre iguales ---------- */}
-      <div className="sticky top-0 z-30 border-y border-[#a09075] bg-[#f5f0e1]/85 backdrop-blur-md">
+      <div className="sticky top-0 z-30 border-y border-[#6b4a2b] bg-[#3a2818]/85 backdrop-blur-md">
         <div className="mx-auto grid max-w-6xl grid-cols-3 gap-2.5 px-4 py-3 sm:gap-3 sm:px-6">
-          {/* BotÃ³n 1 Â· Grabar / Pausar / Reanudar */}
+          {/* Botón 1 · Grabar / Pausar / Reanudar */}
           <ControlButton
             accent="coral"
             icon={phase === "recording" || phase === "paused" ? <PauseIcon size={26} /> : <MicIcon size={26} />}
@@ -1068,7 +1068,7 @@ export default function App() {
             disabled={phase === "sending" || phase === "processing" || phase === "starting"}
             active={phase === "recording"}
           />
-          {/* BotÃ³n 2 Â· Enviar (solo con audio grabado) */}
+          {/* Botón 2 · Enviar (solo con audio grabado) */}
           <ControlButton
             accent="cyan"
             icon={<SendIcon size={26} />}
@@ -1077,7 +1077,7 @@ export default function App() {
             onClick={onSendButton}
             disabled={!hasAudio}
           />
-          {/* BotÃ³n 3 Â· Play / Pausa de la respuesta */}
+          {/* Botón 3 · Play / Pausa de la respuesta */}
           <ControlButton
             accent="mint"
             icon={phase === "speaking" ? <PauseIcon size={26} /> : <PlayIcon size={26} />}
@@ -1093,47 +1093,47 @@ export default function App() {
       <main className="mx-auto grid max-w-6xl gap-4 px-4 py-5 sm:px-6 lg:grid-cols-[1fr_360px]">
         {/* Columna izquierda: consola + respuesta */}
         <div className="flex min-w-0 flex-col gap-4">
-          {/* Consola de grabaciÃ³n */}
-          <section className="rounded-xl border border-[#a09075] bg-[#e8e2d5] p-4 sm:p-5">
+          {/* Consola de grabación */}
+          <section className="rounded-xl border border-[#6b4a2b] bg-[#3a2818] p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5">
                 <StatusDot phase={phase} />
-                <p className="text-sm font-medium text-[#3d3226]">{status}</p>
+                <p className="text-sm font-medium text-[#d9b985]">{status}</p>
                 {phase === "speaking" && <Equalizer />}
               </div>
-              <div className="flex items-center gap-3 font-mono-gem text-xs text-[#5a4d42]">
+              <div className="flex items-center gap-3 font-mono-gem text-xs text-[#a8855a]">
                 <span className={phase === "recording" ? "text-#[c4a076]" : phase === "paused" ? "text-#[8b7561]" : ""}>
                   {formatTime(elapsed)}
                 </span>
-                <span className="hidden rounded border border-[#a09075] px-1.5 py-0.5 text-[10px] sm:inline">
+                <span className="hidden rounded border border-[#6b4a2b] px-1.5 py-0.5 text-[10px] sm:inline">
                   {formatBytes(clipBytes)}
                 </span>
               </div>
             </div>
-            <div className="overflow-hidden rounded-lg border border-[#a09075]/70 bg-[#f5f0e1]/70">
+            <div className="overflow-hidden rounded-lg border border-[#6b4a2b]/70 bg-[#4a3520]">
               <Waveform getAnalyser={getAnalyser} mode={waveMode} />
             </div>
-            <div className="mt-3 grid grid-cols-3 gap-2 font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]">
+            <div className="mt-3 grid grid-cols-3 gap-2 font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]">
               <span>
-                Canal <b className="text-[#3d3226]">mic</b>
+                Canal <b className="text-[#d9b985]">mic</b>
               </span>
               <span className="text-center">
-                Modo <b className="text-[#3d3226]">{hasAudio ? "acumular" : "reposo"}</b>
+                Modo <b className="text-[#d9b985]">{hasAudio ? "acumular" : "reposo"}</b>
               </span>
               <span className="text-right">
-                Clip <b className="text-[#3d3226]">{hasAudio ? "abierto" : "â€”"}</b>
+                Clip <b className="text-[#d9b985]">{hasAudio ? "abierto" : "—"}</b>
               </span>
             </div>
           </section>
 
-          {/* Ãrea de texto: estado + respuesta de la IA */}
-          <section className="flex-1 rounded-xl border border-[#a09075] bg-[#e8e2d5] p-4 sm:p-5">
+          {/* Área de texto: estado + respuesta de la IA */}
+          <section className="flex-1 rounded-xl border border-[#6b4a2b] bg-[#3a2818] p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-[#5a4d42]">
+              <h2 className="font-display text-xs font-semibold uppercase tracking-[0.2em] text-[#a8855a]">
                 Respuesta del asistente
               </h2>
               {wordCount > 0 && (
-                <span className="font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]">
+                <span className="font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]">
                   â‰ˆ {wordCount} palabras
                 </span>
               )}
@@ -1150,47 +1150,47 @@ export default function App() {
             {phase === "processing" || phase === "sending" ? (
               <div className="answer-in space-y-3 py-2">
                 {[92, 100, 78].map((w, i) => (
-                  <div key={i} className="h-3 animate-pulse rounded-full bg-[#1c1538]" style={{ width: `${w}%` }} />
+                  <div key={i} className="h-3 animate-pulse rounded-full bg-[#3a2818]" style={{ width: `${w}%` }} />
                 ))}
-                <p className="pt-1 font-mono-gem text-xs text-[#5a4d42]">
-                  {phase === "sending" ? "Codificando audio en Base64â€¦" : "Gemini estÃ¡ escuchando tu clipâ€¦"}
+                <p className="pt-1 font-mono-gem text-xs text-[#a8855a]">
+                  {phase === "sending" ? "Codificando audio en Base64…" : "Gemini está escuchando tu clip…"}
                 </p>
               </div>
             ) : response ? (
-              <p className="answer-in whitespace-pre-wrap text-[15px] leading-relaxed text-[#3d3226]">{response}</p>
+              <p className="answer-in whitespace-pre-wrap text-[15px] leading-relaxed text-[#d9b985]">{response}</p>
             ) : (
               <div className="py-6 text-center">
-                <p className="mx-auto max-w-md text-sm leading-relaxed text-[#5a4d42]">
+                <p className="mx-auto max-w-md text-sm leading-relaxed text-[#a8855a]">
                   Presiona <b className="text-#[c4a076]">Grabar</b> y formula tu pregunta en voz alta. Puedes{" "}
                   <b className="text-#[8b7561]">pausar</b> para leer y <b className="text-#[c4a076]">reanudar</b>: todo se
-                  acumula en un solo clip. Luego <b className="text-#[a07858]">EnvÃ­a</b> y escucha la respuesta.
+                  acumula en un solo clip. Luego <b className="text-#[a07858]">Envía</b> y escucha la respuesta.
                 </p>
               </div>
             )}
           </section>
         </div>
 
-        {/* Columna derecha: bitÃ¡cora + configuraciÃ³n */}
+        {/* Columna derecha: bitácora + configuración */}
         <div className="flex min-w-0 flex-col gap-4">
-          {/* BitÃ¡cora de sesiÃ³n */}
-          <section className="rounded-xl border border-[#a09075] bg-[#e8e2d5] p-4 sm:p-5">
+          {/* Bitácora de sesión */}
+          <section className="rounded-xl border border-[#6b4a2b] bg-[#3a2818] p-4 sm:p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.2em] text-[#5a4d42]">
-                <HistoryIcon size={15} /> BitÃ¡cora
+              <h2 className="flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.2em] text-[#a8855a]">
+                <HistoryIcon size={15} /> Bitácora
               </h2>
               {history.length > 0 && (
                 <button
                   type="button"
                   onClick={() => setHistory([])}
-                  className="ctrl-btn flex items-center gap-1.5 rounded-md border border-[#a09075] px-2 py-1 font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42] hover:border-[#c4a076]/50 hover:text-[#c4a076]"
+                  className="ctrl-btn flex items-center gap-1.5 rounded-md border border-[#6b4a2b] px-2 py-1 font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a] hover:border-[#c4a076]/50 hover:text-[#c4a076]"
                 >
                   <TrashIcon size={12} /> Limpiar
                 </button>
               )}
             </div>
             {history.length === 0 ? (
-              <p className="py-3 text-center font-mono-gem text-xs text-[#5a4d42]/70">
-                Las respuestas de esta sesiÃ³n aparecerÃ¡n aquÃ­.
+              <p className="py-3 text-center font-mono-gem text-xs text-[#a8855a]/70">
+                Las respuestas de esta sesión aparecerán aquí.
               </p>
             ) : (
               <ul className="flex max-h-64 flex-col gap-2 overflow-y-auto pr-1">
@@ -1199,14 +1199,14 @@ export default function App() {
                     <button
                       type="button"
                       onClick={() => playHistoryItem(item)}
-                      className="ctrl-btn w-full rounded-lg border border-[#a09075] bg-[#1c1538]/60 px-3 py-2.5 text-left hover:border-[#b89476]/50"
+                      className="ctrl-btn w-full rounded-lg border border-[#6b4a2b] bg-[#4a3520] px-3 py-2.5 text-left hover:border-[#b89476]/50"
                       title="Escuchar de nuevo"
                     >
                       <span className="flex items-center justify-between font-mono-gem text-[10px] uppercase tracking-widest text-[#b89476]">
-                        <span>R{history.length - i} Â· {item.time}</span>
-                        <PlayIcon size={11} className="text-[#5a4d42]" />
+                        <span>R{history.length - i} · {item.time}</span>
+                        <PlayIcon size={11} className="text-[#a8855a]" />
                       </span>
-                      <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-[#d4cce0]">
+                      <span className="mt-1 line-clamp-2 block text-xs leading-relaxed text-[#d9b985]">
                         {item.text}
                       </span>
                     </button>
@@ -1216,14 +1216,14 @@ export default function App() {
             )}
           </section>
 
-          {/* ConfiguraciÃ³n */}
-          <section className="rounded-xl border border-[#a09075] bg-[#e8e2d5] p-4 sm:p-5">
-            <h2 className="mb-3 flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.2em] text-[#5a4d42]">
-              <KeyIcon size={15} /> ConfiguraciÃ³n
+          {/* Configuración */}
+          <section className="rounded-xl border border-[#6b4a2b] bg-[#3a2818] p-4 sm:p-5">
+            <h2 className="mb-3 flex items-center gap-2 font-display text-xs font-semibold uppercase tracking-[0.2em] text-[#a8855a]">
+              <KeyIcon size={15} /> Configuración
             </h2>
 
-            <label className="mb-1 block font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]" htmlFor="gem-mic">
-              MicrÃ³fono de entrada
+            <label className="mb-1 block font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]" htmlFor="gem-mic">
+              Micrófono de entrada
             </label>
             <div className="mb-2 flex gap-2">
               <select
@@ -1235,7 +1235,7 @@ export default function App() {
                   saveInputId(v);
                   setMicDiagnostic("");
                 }}
-                className="min-w-0 flex-1 rounded-lg border border-[#a09075] bg-[#f5f0e1] px-3 py-2 font-mono-gem text-xs text-[#3d3226] outline-none transition-colors focus:border-[#a07858]/60"
+                className="min-w-0 flex-1 rounded-lg border border-[#6b4a2b] bg-[#3a2818] px-3 py-2 font-mono-gem text-xs text-[#d9b985] outline-none transition-colors focus:border-[#a07858]/60"
               >
                 <option value="">Predeterminado del sistema</option>
                 {inputDevices.map((d, i) => (
@@ -1255,8 +1255,8 @@ export default function App() {
                     /* no-op */
                   }
                 }}
-                className="ctrl-btn rounded-lg border border-[#a09075] bg-[#f5f0e1] px-3 py-2 text-xs font-semibold text-[#5a4d42] hover:border-[#a07858]/60 hover:text-[#3d3226]"
-                title="Reescanear dispositivos (Ãºtil despuÃ©s de conectar/desconectar USB-C o BT)"
+                className="ctrl-btn rounded-lg border border-[#6b4a2b] bg-[#3a2818] px-3 py-2 text-xs font-semibold text-[#a8855a] hover:border-[#a07858]/60 hover:text-[#d9b985]"
+                title="Reescanear dispositivos (útil después de conectar/desconectar USB-C o BT)"
               >
                 Re-escanear
               </button>
@@ -1269,12 +1269,12 @@ export default function App() {
             {micDiagnostic && (
               <p className="mb-2 -mt-1 text-[11px] leading-relaxed text-[#8b7561]">{micDiagnostic}</p>
             )}
-            <p className="mb-3 -mt-1 text-[11px] leading-relaxed text-[#5a4d42]">
-              Si usÃ¡s un mic corbatero por USB-C o Bluetooth, elegilo acÃ¡ y presionÃ¡
-              <b> Re-escanear</b> despuÃ©s de enchufarlo. La prÃ³xima grabaciÃ³n lo va a tomar.
+            <p className="mb-3 -mt-1 text-[11px] leading-relaxed text-[#a8855a]">
+              Si usás un mic corbatero por USB-C o Bluetooth, elegilo acá y presioná
+              <b> Re-escanear</b> después de enchufarlo. La próxima grabación lo va a tomar.
             </p>
 
-            <label className="mb-1 block font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]" htmlFor="gem-out">
+            <label className="mb-1 block font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]" htmlFor="gem-out">
               Salida de audio (auriculares / BT)
             </label>
             <div className="mb-3 flex gap-2">
@@ -1286,11 +1286,11 @@ export default function App() {
                   setSelectedOutputId(v);
                   saveOutputId(v);
                 }}
-                className="min-w-0 flex-1 rounded-lg border border-[#a09075] bg-[#f5f0e1] px-3 py-2 font-mono-gem text-xs text-[#3d3226] outline-none transition-colors focus:border-[#a07858]/60"
+                className="min-w-0 flex-1 rounded-lg border border-[#6b4a2b] bg-[#3a2818] px-3 py-2 font-mono-gem text-xs text-[#d9b985] outline-none transition-colors focus:border-[#a07858]/60"
                 title={
                   supportsOutputSelection() || supportsAudioContextSinkId()
                     ? "Cambia la salida de los sonidos de la web y de la voz del asistente"
-                    : "Este navegador no permite elegir dispositivo de salida â€” se usarÃ¡ el predeterminado del sistema"
+                    : "Este navegador no permite elegir dispositivo de salida — se usará el predeterminado del sistema"
                 }
               >
                 <option value="">Predeterminada del sistema</option>
@@ -1312,12 +1312,12 @@ export default function App() {
                 Probar
               </button>
             </div>
-            <p className="mb-4 -mt-2 text-[11px] leading-relaxed text-[#5a4d42]">
-              SeleccionÃ¡ los auriculares o el dispositivo Bluetooth/USB-C. La voz del
-              asistente y los beeps de feedback saldrÃ¡n por acÃ¡.
+            <p className="mb-4 -mt-2 text-[11px] leading-relaxed text-[#a8855a]">
+              Seleccioná los auriculares o el dispositivo Bluetooth/USB-C. La voz del
+              asistente y los beeps de feedback saldrán por acá.
             </p>
 
-            <label className="mb-1 block font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]" htmlFor="gem-key">
+            <label className="mb-1 block font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]" htmlFor="gem-key">
               API Key de Gemini
             </label>
             <div className="flex gap-2">
@@ -1327,14 +1327,14 @@ export default function App() {
                   type={showKey ? "text" : "password"}
                   value={keyInput}
                   onChange={(e) => setKeyInput(e.target.value)}
-                  placeholder={keyConfigured ? "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢ (guardada)" : "Pega tu llave aquÃ­"}
-                  className="w-full rounded-lg border border-[#a09075] bg-[#f5f0e1] px-3 py-2 pr-10 font-mono-gem text-xs text-[#3d3226] placeholder:text-[#5a4d42]/50 outline-none transition-colors focus:border-[#a07858]/60"
+                  placeholder={keyConfigured ? "•••••••• (guardada)" : "Pega tu llave aquí"}
+                  className="w-full rounded-lg border border-[#6b4a2b] bg-[#3a2818] px-3 py-2 pr-10 font-mono-gem text-xs text-[#d9b985] placeholder:text-[#a8855a]/50 outline-none transition-colors focus:border-[#a07858]/60"
                 />
                 <button
                   type="button"
                   onClick={() => setShowKey((s) => !s)}
                   aria-label={showKey ? "Ocultar llave" : "Mostrar llave"}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5a4d42] hover:text-[#3d3226]"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-[#a8855a] hover:text-[#d9b985]"
                 >
                   {showKey ? <EyeOffIcon size={16} /> : <EyeIcon size={16} />}
                 </button>
@@ -1347,34 +1347,34 @@ export default function App() {
                 Guardar
               </button>
             </div>
-            <p className={`mt-2 text-[11px] leading-relaxed ${keySavedFlash ? "text-[#b89476]" : "text-[#5a4d42]"}`}>
+            <p className={`mt-2 text-[11px] leading-relaxed ${keySavedFlash ? "text-[#b89476]" : "text-[#a8855a]"}`}>
               {keySavedFlash
                 ? "Llave guardada en este navegador âœ“"
                 : keyConfigured
-                  ? "Usando la llave guardada en este navegador. TambiÃ©n puedes fijarla en la constante GEMINI_API_KEY."
-                  : "Sin llave aÃºn: pÃ©gala arriba o edita la constante GEMINI_API_KEY en src/lib/gemini.ts."}
+                  ? "Usando la llave guardada en este navegador. También puedes fijarla en la constante GEMINI_API_KEY."
+                  : "Sin llave aún: pégala arriba o edita la constante GEMINI_API_KEY en src/lib/gemini.ts."}
             </p>
 
             <div className="mt-4 grid grid-cols-2 gap-2">
-              <div className="rounded-lg border border-[#a09075] bg-[#1c1538]/60 px-3 py-2.5">
-                <p className="font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]">Feedback sonoro</p>
-                <button type="button" onClick={toggleMute} className="ctrl-btn mt-1 flex items-center gap-1.5 text-xs font-semibold text-[#3d3226]">
+              <div className="rounded-lg border border-[#6b4a2b] bg-[#4a3520] px-3 py-2.5">
+                <p className="font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]">Feedback sonoro</p>
+                <button type="button" onClick={toggleMute} className="ctrl-btn mt-1 flex items-center gap-1.5 text-xs font-semibold text-[#d9b985]">
                   {muted ? <SpeakerOffIcon size={14} className="text-[#c4a076]" /> : <SpeakerOnIcon size={14} className="text-[#b89476]" />}
                   {muted ? "Silenciado" : "Activado"}
                 </button>
               </div>
-              <div className="rounded-lg border border-[#a09075] bg-[#1c1538]/60 px-3 py-2.5">
-                <p className="font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42]">Volumen sfx</p>
+              <div className="rounded-lg border border-[#6b4a2b] bg-[#4a3520] px-3 py-2.5">
+                <p className="font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a]">Volumen sfx</p>
                 <p className="mt-1 font-mono-gem text-xs font-semibold text-[#8b7561]">SOUND_VOLUME = {SOUND_VOLUME}</p>
               </div>
             </div>
 
-            <details className="group mt-4 rounded-lg border border-[#a09075] bg-[#f5f0e1]/60">
-              <summary className="cursor-pointer select-none px-3 py-2.5 font-mono-gem text-[10px] uppercase tracking-widest text-[#5a4d42] transition-colors hover:text-[#3d3226]">
-                Prompt del sistema â–¾
+            <details className="group mt-4 rounded-lg border border-[#6b4a2b] bg-[#4a3520]">
+              <summary className="cursor-pointer select-none px-3 py-2.5 font-mono-gem text-[10px] uppercase tracking-widest text-[#a8855a] transition-colors hover:text-[#d9b985]">
+                Prompt del sistema –¾
               </summary>
-              <p className="border-t border-[#a09075] px-3 py-2.5 text-xs italic leading-relaxed text-[#d4cce0]">
-                â€œ{SYSTEM_PROMPT}â€
+              <p className="border-t border-[#6b4a2b] px-3 py-2.5 text-xs italic leading-relaxed text-[#d9b985]">
+                —œ{SYSTEM_PROMPT}—
               </p>
             </details>
           </section>
