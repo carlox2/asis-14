@@ -201,7 +201,23 @@ duda, tema o consigna de parcial, redacta directamente la respuesta
 modelo de examen integrando los conceptos clave de los autores
 correspondientes, manteniendo una prosa narrativa continua de alta densidad
 teórica y respetando el límite estricto de 250 a 400 palabras en 3 o 4 párrafos
-sin viñetas.`
+sin viñetas.
+
+PROHIBICIÓN ABSOLUTA DE TIMECODES Y METADATA DE TRANSCRIPCIÓN:
+Tu salida es TEXTO LITERAL para ser leído en voz alta por un TTS.
+Por lo tanto, está TERMINANTEMENTE PROHIBIDO incluir en la respuesta:
+  - Marcas de tiempo tipo SRT/VTT (00:05, 01:03, 1:23:45, 00:00.500, etc.)
+  - Rangos SRT/VTT (00:05 --> 00:08)
+  - Índices de bloque numéricos sueltos al inicio de línea
+  - Etiquetas de hablante (Speaker 1:, Hablante 2:, [Locutor])
+  - Cualquier artefacto de formato de transcripción de audio
+
+El audio de entrada puede ser largo (varios minutos); NUNCA respondas
+"transcribiendo" o parafraseando con timecodes. Responde siempre como si
+fuera la respuesta de un examen escrito, en prosa continua, sin
+metadatos de ningún tipo. Si el sistema de pos-procesado detecta
+timecodes en tu salida, los eliminará y la respuesta quedará
+ininteligible. Por tu bien y el del estudiante, NO los emitas.`
 
 /**
  * Lee la API key desde la variable de entorno de Vite.
@@ -250,6 +266,7 @@ export function blobToBase64(blob: Blob): Promise<string> {
  *
  * Patrones que elimina:
  *  - Sello MM:SS o HH:MM:SS pegado o suelto:           00:05 · 1:23 · 00:05.123
+ *  - Pegado a una palabra (sin espacio):                "socio01:03estructural" → "socioestructural"
  *  - Con corchetes / ángulos / paréntesis:              [00:05] · <00:05> · (00:05)
  *  - Rangos SRT/VTT:                                    00:05 --> 00:08 · 00:05,000 --> 00:08,000
  *  - Etiquetas de hablante:                             Speaker 1: · Hablante 2:
@@ -270,8 +287,14 @@ export function sanitizeResponseText(text: string): string {
     /[\[\<\(]\s*\b\d{1,2}:\d{2}(?::\d{2})?(?:[.,]\d{1,3})?\b\s*[\]\>\)]/g,
     " "
   );
-  // 4) Sellos sueltos: 00:05, 1:23, 00:05.123 (incluye HH:MM:SS)
-  t = t.replace(/\b\d{1,2}:\d{2}(?::\d{2})?(?:[.,]\d{1,3})?\b/g, " ");
+  // 4) Sellos sueltos: 00:05, 1:23, 00:05.123 (incluye HH:MM:SS).
+  //    Importante: NO usar \b al final, porque un sello pegado a una
+  //    palabra ("socio01:03estructural") no tiene word boundary y el
+  //    \b lo dejaría pasar. Usamos (?<!\d) al inicio (para no
+  //    comernos el "12" de "12:00:30") y (?!\d) al final (para no
+  //    comernos el "00" de "12:00:30.5"). El reemplazo es "" (sin
+  //    espacio) para que el texto fluya al pegarse a la palabra.
+  t = t.replace(/(?<!\d)\d{1,2}:\d{2}(?::\d{2})?(?:[.,]\d{1,3})?(?!\d)/g, "");
   // 5) Etiquetas de hablante: "Speaker 1:", "Hablante 2]", "Speaker1 -"
   t = t.replace(/\b(?:Speaker|Hablante|Unknown)\s*\d+\s*[:\-\]]\s*/gi, " ");
   // 6) Limpieza: colapsa espacios y saltos de línea sobrantes
@@ -350,10 +373,10 @@ export async function askGemini(base64Audio: string, mimeType: string, apiKey: s
   ];
   const config = {
     systemInstruction: SYSTEM_PROMPT,
-    // Bajamos el techo: las respuestas de multiple choice rara vez
-    // superan los 600 tokens, y un techo más bajo = respuesta más
-    // rápida (menos que generar).
-    maxOutputTokens: 1024,
+    // Subimos el techo: las respuestas de parcial de 300-400 palabras
+    // (prosa densa) pueden usar 1500-2200 tokens. 1024 las cortaba a
+    // mitad de párrafo en audios largos. 2400 deja margen.
+    maxOutputTokens: 2400,
     // Thinking LOW reduce la latencia drásticamente (sin esto, el
     // modelo "piensa" mucho antes de empezar a generar texto y
     // una respuesta puede tardar varios minutos).
